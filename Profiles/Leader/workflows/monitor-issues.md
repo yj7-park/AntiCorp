@@ -1,37 +1,37 @@
+﻿---
+description: GitHub Issue瑜?紐⑤땲?곕쭅?섍퀬 ??Issue???묐떟
 ---
-description: GitHub Issue를 모니터링하고 새 Issue에 응답
----
 
-# Issue 모니터링 워크플로우
+# Issue 紐⑤땲?곕쭅 ?뚰겕?뚮줈??
 
-이 워크플로우는 자동으로 GitHub Issue를 모니터링하고, 자신에게 할당된 label이 있는 Issue를 감지하여 처리합니다.
+???뚰겕?뚮줈?곕뒗 ?먮룞?쇰줈 GitHub Issue瑜?紐⑤땲?곕쭅?섍퀬, ?먯떊?먭쾶 ?좊떦??label???덈뒗 Issue瑜?媛먯??섏뿬 泥섎━?⑸땲??
 
-## 실행 단계
+## ?ㅽ뻾 ?④퀎
 
 // turbo-all
 
-### 1. IssueMonitor 프로그램 빌드 (최초 1회)
+### 1. IssueMonitor ?꾨줈洹몃옩 鍮뚮뱶 (理쒖큹 1??
 
-처음 실행하는 경우, IssueMonitor를 빌드합니다:
+泥섏쓬 ?ㅽ뻾?섎뒗 寃쎌슦, IssueMonitor瑜?鍮뚮뱶?⑸땲??
 
 ```powershell
 cd c:\Workspace\AntiCorp\Tools\IssueMonitor
 dotnet build --configuration Release
 ```
 
-### 2. 환경 변수 설정
+### 2. ?섍꼍 蹂???ㅼ젙
 
-GitHub Personal Access Token을 환경 변수로 설정:
+GitHub Personal Access Token???섍꼍 蹂?섎줈 ?ㅼ젙:
 
 ```powershell
 $env:GITHUB_TOKEN = "ghp_your_token_here"
 ```
 
-또는 시스템 환경 변수로 영구 설정하세요.
+?먮뒗 ?쒖뒪???섍꼍 蹂?섎줈 ?곴뎄 ?ㅼ젙?섏꽭??
 
-### 3. IssueMonitor 실행
+### 3. IssueMonitor ?ㅽ뻾
 
-자신의 역할에 맞는 label로 모니터링 시작:
+?먯떊????븷??留욌뒗 label濡?紐⑤땲?곕쭅 ?쒖옉:
 
 **Leader Agent:**
 ```powershell
@@ -53,53 +53,54 @@ c:\Workspace\AntiCorp\Tools\IssueMonitor\bin\Release\net8.0\IssueMonitor.exe --r
 c:\Workspace\AntiCorp\Tools\IssueMonitor\bin\Release\net8.0\IssueMonitor.exe --repo yj7-park/AntiCorp --labels "@devops,@all" --interval 10
 ```
 
-### 4. stdout 출력 대기
+### 4. stdout 異쒕젰 ?湲?
 
-프로그램이 새 Issue를 감지하면 다음과 같은 형식으로 출력합니다:
+?꾨줈洹몃옩????Issue瑜?媛먯??섎㈃ ?ㅼ쓬怨?媛숈? ?뺤떇?쇰줈 異쒕젰?⑸땲??
 
 ```
 ---
 [NEW ISSUE] #123
-Title: 새로운 기능 요청
+Title: ?덈줈??湲곕뒫 ?붿껌
 Labels: @developer
 Created: 2026-02-03T10:30:00Z
 URL: https://github.com/yj7-park/AntiCorp/issues/123
 Body:
-React 기반 대시보드를 구현해주세요.
+React 湲곕컲 ??쒕낫?쒕? 援ы쁽?댁＜?몄슂.
 ---
 ```
 
-### 5. Issue 내용 분석
+### 5. Issue ?댁슜 遺꾩꽍
 
-출력된 Issue를 읽고:
-- Title과 Body에서 요구사항 파악
-- Labels를 확인하여 우선순위 판단
-- 필요한 정보가 부족하면 추가 질문
+異쒕젰??Issue瑜??쎄퀬:
+- Title怨?Body?먯꽌 ?붽뎄?ы빆 ?뚯븙
+- Labels瑜??뺤씤?섏뿬 ?곗꽑?쒖쐞 ?먮떒
+- ?꾩슂???뺣낫媛 遺議깊븯硫?異붽? 吏덈Ц
 
-### 6. 작업 처리
+### 6. ?묒뾽 泥섎━
 
-Issue 내용에 따라 적절한 작업 수행:
-- **@new-project** (Leader만): 새 프로젝트 생성 프로세스 실행
-- **@leader**: 작업 분배 또는 프로젝트 관리
-- **@developer**: 코드 구현
-- **@tester**: 테스트 작성 및 실행
-- **@devops**: 빌드/배포 설정
-- **@all**: 전체 공지 확인
+Issue ?댁슜???곕씪 ?곸젅???묒뾽 ?섑뻾:
+- **@new-project** (Leader留?: ???꾨줈?앺듃 ?앹꽦 ?꾨줈?몄뒪 ?ㅽ뻾
+- **@leader**: ?묒뾽 遺꾨같 ?먮뒗 ?꾨줈?앺듃 愿由?
+- **@developer**: 肄붾뱶 援ы쁽
+- **@tester**: ?뚯뒪???묒꽦 諛??ㅽ뻾
+- **@devops**: 鍮뚮뱶/諛고룷 ?ㅼ젙
+- **@all**: ?꾩껜 怨듭? ?뺤씤
 
-### 7. 작업 완료 후
+### 7. ?묒뾽 ?꾨즺 ??
 
-작업을 완료하면:
-1. 결과를 GitHub Issue로 보고
-2. 필요시 다른 Agent에게 작업 위임
-3. 다시 모니터링 재개 (프로그램은 자동으로 계속 실행됨)
+?묒뾽???꾨즺?섎㈃:
+1. 寃곌낵瑜?GitHub Issue濡?蹂닿퀬
+2. ?꾩슂???ㅻⅨ Agent?먭쾶 ?묒뾽 ?꾩엫
+3. ?ㅼ떆 紐⑤땲?곕쭅 ?ш컻 (?꾨줈洹몃옩? ?먮룞?쇰줈 怨꾩냽 ?ㅽ뻾??
 
-## 주의사항
+## 二쇱쓽?ы빆
 
 > [!IMPORTANT]
-> - IssueMonitor는 백그라운드에서 계속 실행되어야 합니다
-> - 처리된 Issue는 자동으로 기록되어 중복 처리되지 않습니다
-> - GitHub API rate limit을 고려하여 적절한 interval 설정 (기본 10초)
+> - IssueMonitor??諛깃렇?쇱슫?쒖뿉??怨꾩냽 ?ㅽ뻾?섏뼱???⑸땲??
+> - 泥섎━??Issue???먮룞?쇰줈 湲곕줉?섏뼱 以묐났 泥섎━?섏? ?딆뒿?덈떎
+> - GitHub API rate limit??怨좊젮?섏뿬 ?곸젅??interval ?ㅼ젙 (湲곕낯 10珥?
 
 > [!TIP]
-> - Antigravity의 장시간 대기 설정을 활용하여 프로그램이 출력할 때까지 기다리세요
-> - 여러 Issue가 한번에 출력될 수 있으니 모두 확인하세요
+> - Antigravity???μ떆媛??湲??ㅼ젙???쒖슜?섏뿬 ?꾨줈洹몃옩??異쒕젰???뚭퉴吏 湲곕떎由ъ꽭??
+> - ?щ윭 Issue媛 ?쒕쾲??異쒕젰?????덉쑝??紐⑤몢 ?뺤씤?섏꽭??
+

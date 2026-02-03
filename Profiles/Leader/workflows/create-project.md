@@ -1,179 +1,180 @@
+﻿---
+description: ???꾨줈?앺듃瑜??앹꽦?섍퀬 ????묒뾽 遺꾨같
 ---
-description: 새 프로젝트를 생성하고 팀에 작업 분배
----
 
-# 새 프로젝트 생성 워크플로우
+# ???꾨줈?앺듃 ?앹꽦 ?뚰겕?뚮줈??
 
-`@new-project` label이 있는 Issue를 받으면 이 워크플로우를 실행하세요.
+`@new-project` label???덈뒗 Issue瑜?諛쏆쑝硫????뚰겕?뚮줈?곕? ?ㅽ뻾?섏꽭??
 
-## 실행 단계
+## ?ㅽ뻾 ?④퀎
 
 // turbo-all
 
-### 1. 프로젝트 정보 분석
+### 1. ?꾨줈?앺듃 ?뺣낫 遺꾩꽍
 
-Issue 내용에서 다음 정보를 파악:
-- 프로젝트 이름
-- 기술 스택 (React, Python, C# 등)
-- 주요 기능 요구사항
-- 예상 일정
+Issue ?댁슜?먯꽌 ?ㅼ쓬 ?뺣낫瑜??뚯븙:
+- ?꾨줈?앺듃 ?대쫫
+- 湲곗닠 ?ㅽ깮 (React, Python, C# ??
+- 二쇱슂 湲곕뒫 ?붽뎄?ы빆
+- ?덉긽 ?쇱젙
 
-### 2. 프로젝트 폴더 생성
+### 2. ?꾨줈?앺듃 ?대뜑 ?앹꽦
 
 ```powershell
-# 프로젝트 이름을 kebab-case로 변환 (예: "My Project" -> "my-project")
+# ?꾨줈?앺듃 ?대쫫??kebab-case濡?蹂??(?? "My Project" -> "my-project")
 $projectName = "project-name-here"
 $projectPath = "c:\Workspace\AntiCorp\Projects\$projectName"
 
-# 폴더 생성
+# ?대뜑 ?앹꽦
 New-Item -Path $projectPath -ItemType Directory -Force
 ```
 
-### 3. Git Repository 초기화
+### 3. Git Repository 珥덇린??
 
 ```powershell
 cd $projectPath
 git init
 git branch -M main
 
-# 초기 README 생성
+# 珥덇린 README ?앹꽦
 @"
 # $projectName
 
-프로젝트 설명...
+?꾨줈?앺듃 ?ㅻ챸...
 "@ | Out-File -FilePath "README.md" -Encoding utf8
 
 git add README.md
 git commit -m "Initial commit"
 ```
 
-### 4. Workspace에 폴더 추가
+### 4. Workspace???대뜑 異붽?
 
-Antigravity UI를 사용하여:
+Antigravity UI瑜??ъ슜?섏뿬:
 1. File -> Add Folder to Workspace
-2. `$projectPath` 선택
-3. 기존 AntiCorp workspace와 함께 유지
+2. `$projectPath` ?좏깮
+3. 湲곗〈 AntiCorp workspace? ?④퍡 ?좎?
 
-또는 명령줄로:
+?먮뒗 紐낅졊以꾨줈:
 ```powershell
-# workspace 설정 파일에 폴더 추가 (구체적인 방법은 Antigravity 문서 참조)
+# workspace ?ㅼ젙 ?뚯씪???대뜑 異붽? (援ъ껜?곸씤 諛⑸쾿? Antigravity 臾몄꽌 李몄“)
 ```
 
-### 5. 작업 분해
+### 5. ?묒뾽 遺꾪빐
 
-프로젝트를 다음과 같이 분해:
+?꾨줈?앺듃瑜??ㅼ쓬怨?媛숈씠 遺꾪빐:
 
-**DevOps 작업:**
-- 프로젝트 초기 설정
-- 의존성 관리 파일 생성
-- 빌드 스크립트 작성
+**DevOps ?묒뾽:**
+- ?꾨줈?앺듃 珥덇린 ?ㅼ젙
+- ?섏〈??愿由??뚯씪 ?앹꽦
+- 鍮뚮뱶 ?ㅽ겕由쏀듃 ?묒꽦
 
-**Developer 작업:**
-- 핵심 기능 구현
-- UI/UX 개발
+**Developer ?묒뾽:**
+- ?듭떖 湲곕뒫 援ы쁽
+- UI/UX 媛쒕컻
 
-**Tester 작업:**
-- 테스트 케이스 작성
-- 기능 검증
+**Tester ?묒뾽:**
+- ?뚯뒪??耳?댁뒪 ?묒꽦
+- 湲곕뒫 寃利?
 
-### 6. DevOps에게 초기 설정 요청
+### 6. DevOps?먭쾶 珥덇린 ?ㅼ젙 ?붿껌
 
 ```powershell
 .\Tools\Scripts\Create-Issue.ps1 `
-    -Title "[$projectName] 프로젝트 초기 설정" `
+    -Title "[$projectName] ?꾨줈?앺듃 珥덇린 ?ㅼ젙" `
     -Body @"
-새 프로젝트의 초기 설정을 해주세요.
+???꾨줈?앺듃??珥덇린 ?ㅼ젙???댁＜?몄슂.
 
-**프로젝트 경로:** $projectPath
-**기술 스택:** (기술 스택 입력)
+**?꾨줈?앺듃 寃쎈줈:** $projectPath
+**湲곗닠 ?ㅽ깮:** (湲곗닠 ?ㅽ깮 ?낅젰)
 
-**작업 내용:**
-- package.json / requirements.txt / .csproj 생성
-- .gitignore 작성
-- 빌드 스크립트 작성
-- 필요한 의존성 설치
+**?묒뾽 ?댁슜:**
+- package.json / requirements.txt / .csproj ?앹꽦
+- .gitignore ?묒꽦
+- 鍮뚮뱶 ?ㅽ겕由쏀듃 ?묒꽦
+- ?꾩슂???섏〈???ㅼ튂
 "@ `
     -Labels "@devops"
 ```
 
-### 7. Developer에게 기능 구현 요청
+### 7. Developer?먭쾶 湲곕뒫 援ы쁽 ?붿껌
 
-주요 기능별로 Issue 생성:
+二쇱슂 湲곕뒫蹂꾨줈 Issue ?앹꽦:
 
 ```powershell
 .\Tools\Scripts\Create-Issue.ps1 `
-    -Title "[$projectName] (기능명) 구현" `
+    -Title "[$projectName] (湲곕뒫紐? 援ы쁽" `
     -Body @"
-(기능 상세 설명)
+(湲곕뒫 ?곸꽭 ?ㅻ챸)
 
-**요구사항:**
-- 요구사항 1
-- 요구사항 2
+**?붽뎄?ы빆:**
+- ?붽뎄?ы빆 1
+- ?붽뎄?ы빆 2
 
-**참고사항:**
-- 참고사항...
+**李멸퀬?ы빆:**
+- 李멸퀬?ы빆...
 "@ `
     -Labels "@developer"
 ```
 
-### 8. Tester에게 테스트 요청
+### 8. Tester?먭쾶 ?뚯뒪???붿껌
 
 ```powershell
 .\Tools\Scripts\Create-Issue.ps1 `
-    -Title "[$projectName] 테스트 케이스 작성" `
+    -Title "[$projectName] ?뚯뒪??耳?댁뒪 ?묒꽦" `
     -Body @"
-프로젝트의 테스트 케이스를 작성해주세요.
+?꾨줈?앺듃???뚯뒪??耳?댁뒪瑜??묒꽦?댁＜?몄슂.
 
-**테스트 대상:**
-- 기능 1
-- 기능 2
+**?뚯뒪?????**
+- 湲곕뒫 1
+- 湲곕뒫 2
 
-**우선순위:**
-- Critical path 테스트 우선
+**?곗꽑?쒖쐞:**
+- Critical path ?뚯뒪???곗꽑
 "@ `
     -Labels "@tester"
 ```
 
-### 9. 프로젝트 추적 Issue 생성
+### 9. ?꾨줈?앺듃 異붿쟻 Issue ?앹꽦
 
-전체 프로젝트 진행 상황을 추적하는 Issue:
+?꾩껜 ?꾨줈?앺듃 吏꾪뻾 ?곹솴??異붿쟻?섎뒗 Issue:
 
 ```powershell
 .\Tools\Scripts\Create-Issue.ps1 `
-    -Title "[$projectName] 프로젝트 진행 상황" `
+    -Title "[$projectName] ?꾨줈?앺듃 吏꾪뻾 ?곹솴" `
     -Body @"
-프로젝트 전체 진행 상황을 추적합니다.
+?꾨줈?앺듃 ?꾩껜 吏꾪뻾 ?곹솴??異붿쟻?⑸땲??
 
-## 작업 현황
-- [ ] 프로젝트 초기 설정 (DevOps)
-- [ ] 기능 1 구현 (Developer)
-- [ ] 기능 2 구현 (Developer)
-- [ ] 테스트 작성 (Tester)
-- [ ] 통합 테스트 (Tester)
+## ?묒뾽 ?꾪솴
+- [ ] ?꾨줈?앺듃 珥덇린 ?ㅼ젙 (DevOps)
+- [ ] 湲곕뒫 1 援ы쁽 (Developer)
+- [ ] 湲곕뒫 2 援ы쁽 (Developer)
+- [ ] ?뚯뒪???묒꽦 (Tester)
+- [ ] ?듯빀 ?뚯뒪??(Tester)
 
-## 일정
-- 시작일: (날짜)
-- 목표 완료일: (날짜)
+## ?쇱젙
+- ?쒖옉?? (?좎쭨)
+- 紐⑺몴 ?꾨즺?? (?좎쭨)
 "@ `
     -Labels "@all"
 ```
 
-### 10. 원본 Issue 닫기
+### 10. ?먮낯 Issue ?リ린
 
-새 프로젝트 생성 작업이 완료되면:
+???꾨줈?앺듃 ?앹꽦 ?묒뾽???꾨즺?섎㈃:
 
 ```powershell
-# Issue 번호 확인 후
-gh issue close <issue-number> --repo yj7-park/AntiCorp --comment "프로젝트 생성 완료 및 작업 분배 완료"
+# Issue 踰덊샇 ?뺤씤 ??
+gh issue close <issue-number> --repo yj7-park/AntiCorp --comment "?꾨줈?앺듃 ?앹꽦 ?꾨즺 諛??묒뾽 遺꾨같 ?꾨즺"
 ```
 
-## 주의사항
+## 二쇱쓽?ы빆
 
 > [!IMPORTANT]
-> - 프로젝트 폴더는 반드시 `c:\Workspace\AntiCorp\Projects\` 하위에 생성
-> - 기존 workspace를 대체하지 말고 폴더만 추가
-> - 모든 작업 분배는 명확하고 구체적으로
+> - ?꾨줈?앺듃 ?대뜑??諛섎뱶??`c:\Workspace\AntiCorp\Projects\` ?섏쐞???앹꽦
+> - 湲곗〈 workspace瑜??泥댄븯吏 留먭퀬 ?대뜑留?異붽?
+> - 紐⑤뱺 ?묒뾽 遺꾨같??紐낇솗?섍퀬 援ъ껜?곸쑝濡?
 
 > [!WARNING]
-> - 프로젝트 이름에 특수문자나 공백이 있으면 kebab-case로 변환
-> - Git repository는 반드시 초기화
+> - ?꾨줈?앺듃 ?대쫫???뱀닔臾몄옄??怨듬갚???덉쑝硫?kebab-case濡?蹂??
+> - Git repository??諛섎뱶??珥덇린??
+

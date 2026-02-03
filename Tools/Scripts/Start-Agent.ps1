@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory=$true)]
     [ValidateSet("Leader", "Developer", "Tester", "DevOps")]
     [string]$Agent,
@@ -10,19 +10,19 @@ param(
 
 <#
 .SYNOPSIS
-    특정 Agent의 Antigravity 클라이언트를 실행하는 스크립트
+    ?뱀젙 Agent??Antigravity ?대씪?댁뼵?몃? ?ㅽ뻾?섎뒗 ?ㅽ겕由쏀듃
 
 .DESCRIPTION
- 각 Agent의 profile을 사용하여 Antigravity 클라이언트를 실행합니다.
+ 媛?Agent??profile???ъ슜?섏뿬 Antigravity ?대씪?댁뼵?몃? ?ㅽ뻾?⑸땲??
 
 .PARAMETER Agent
-    실행할 Agent (Leader, Developer, Tester, DevOps)
+    ?ㅽ뻾??Agent (Leader, Developer, Tester, DevOps)
 
 .PARAMETER WorkspacePath
-    Workspace 경로 (기본값: c:\Workspace\AntiCorp)
+    Workspace 寃쎈줈 (湲곕낯媛? c:\Workspace\AntiCorp)
 
 .PARAMETER AntigravityPath
-    Antigravity 실행 파일 경로 (기본값: antigravity.exe)
+    Antigravity ?ㅽ뻾 ?뚯씪 寃쎈줈 (湲곕낯媛? antigravity.exe)
 
 .EXAMPLE
     .\Start-Agent.ps1 -Agent Leader
@@ -38,7 +38,7 @@ Write-Host "  Profile: $profileName" -ForegroundColor White
 Write-Host "  Workspace: $WorkspacePath" -ForegroundColor White
 Write-Host ""
 
-# Workspace 존재 확인
+# Workspace 議댁옱 ?뺤씤
 if (-not (Test-Path $WorkspacePath)) {
     Write-Warning "Workspace path does not exist: $WorkspacePath"
     $create = Read-Host "Create workspace directory? (y/n)"
@@ -52,7 +52,7 @@ if (-not (Test-Path $WorkspacePath)) {
     }
 }
 
-# Antigravity 실행
+# Antigravity ?ㅽ뻾
 try {
     $arguments = @(
         "--profile", $profileName,
@@ -93,3 +93,4 @@ catch {
     Write-Error "Failed to start agent: $_"
     exit 1
 }
+

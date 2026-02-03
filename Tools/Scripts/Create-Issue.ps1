@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory=$true)]
     [string]$Title,
     
@@ -13,37 +13,37 @@ param(
 
 <#
 .SYNOPSIS
-    GitHub Issue를 생성하는 스크립트
+    GitHub Issue瑜??앹꽦?섎뒗 ?ㅽ겕由쏀듃
 
 .DESCRIPTION
-    GitHub CLI를 사용하여 Issue를 생성하고 지정된 label을 태그합니다.
+    GitHub CLI瑜??ъ슜?섏뿬 Issue瑜??앹꽦?섍퀬 吏?뺣맂 label???쒓렇?⑸땲??
 
 .PARAMETER Title
-    Issue 제목
+    Issue ?쒕ぉ
 
 .PARAMETER Body
-    Issue 본문
+    Issue 蹂몃Ц
 
 .PARAMETER Labels
-    태그할 label 목록 (배열)
+    ?쒓렇??label 紐⑸줉 (諛곗뿴)
 
 .PARAMETER Repo
-    Repository (기본값: yj7-park/AntiCorp)
+    Repository (湲곕낯媛? yj7-park/AntiCorp)
 
 .EXAMPLE
-    .\Create-Issue.ps1 -Title "새로운 기능 요청" -Body "상세 설명" -Labels "@developer","@all"
+    .\Create-Issue.ps1 -Title "?덈줈??湲곕뒫 ?붿껌" -Body "?곸꽭 ?ㅻ챸" -Labels "@developer","@all"
 #>
 
-# GitHub CLI 설치 확인
+# GitHub CLI ?ㅼ튂 ?뺤씤
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
-    Write-Error "GitHub CLI (gh)가 설치되어 있지 않습니다. https://cli.github.com/ 에서 설치하세요."
+    Write-Error "GitHub CLI (gh)媛 ?ㅼ튂?섏뼱 ?덉? ?딆뒿?덈떎. https://cli.github.com/ ?먯꽌 ?ㅼ튂?섏꽭??"
     exit 1
 }
 
-# GitHub 인증 확인
+# GitHub ?몄쬆 ?뺤씤
 $authStatus = gh auth status 2>&1
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "GitHub CLI 인증이 필요합니다. 'gh auth login' 명령을 실행하세요."
+    Write-Error "GitHub CLI ?몄쬆???꾩슂?⑸땲?? 'gh auth login' 紐낅졊???ㅽ뻾?섏꽭??"
     exit 1
 }
 
@@ -51,7 +51,7 @@ Write-Host "Creating issue in repository: $Repo" -ForegroundColor Cyan
 Write-Host "Title: $Title" -ForegroundColor White
 Write-Host "Labels: $($Labels -join ', ')" -ForegroundColor Yellow
 
-# Issue 생성
+# Issue ?앹꽦
 $labelArgs = $Labels | ForEach-Object { "--label", $_ }
 
 try {
@@ -68,3 +68,4 @@ catch {
     Write-Error "Failed to create issue: $_"
     exit 1
 }
+
