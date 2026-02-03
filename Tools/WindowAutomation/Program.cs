@@ -63,11 +63,95 @@ namespace WindowAutomation
                     GetActiveWindow();
                     break;
 
+                case "setup":
+                    SetupAllAgents();
+                    break;
+
                 default:
                     Console.WriteLine($"Error: Unknown command '{command}'");
                     PrintUsage();
                     break;
             }
+        }
+
+        private static void SetupAllAgents()
+        {
+            string[] agents = { "Leader", "Developer", "Tester", "DevOps" };
+            string antigravityPath = "antigravity.exe";
+            string workspacePath = "c:\\Workspace\\AntiCorp";
+
+            Console.WriteLine("AntiCorp System Orchestrator - Starting Setup Sequence...");
+            Console.WriteLine("---------------------------------------------------------");
+
+            foreach (var agent in agents)
+            {
+                string profileName = $"AntiCorp-{agent}";
+                string windowSearchTitle = profileName; // 에이전트 윈도우 타이틀에 프로필명이 포함된다고 가정
+
+                Console.WriteLine($"\n[Step] Setting up {agent} Agent...");
+
+                IntPtr hWnd = FindWindowByPartialTitle(windowSearchTitle);
+                if (hWnd == IntPtr.Zero)
+                {
+                    Console.WriteLine($"  - Starting {agent} process...");
+                    try
+                    {
+                        var startInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = antigravityPath,
+                            Arguments = $"--profile {profileName} --workspace {workspacePath}",
+                            UseShellExecute = true
+                        };
+                        System.Diagnostics.Process.Start(startInfo);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"  - Error starting {agent}: {ex.Message}");
+                        continue;
+                    }
+
+                    // 윈도우가 나타날 때까지 대기 (최대 30초)
+                    int retries = 30;
+                    while (hWnd == IntPtr.Zero && retries > 0)
+                    {
+                        Thread.Sleep(1000);
+                        hWnd = FindWindowByPartialTitle(windowSearchTitle);
+                        retries--;
+                    }
+                }
+
+                if (hWnd != IntPtr.Zero)
+                {
+                    Console.WriteLine($"  - Found window for {agent}. Activating...");
+                    ActivateWindow(windowSearchTitle);
+                    Thread.Sleep(1500); // 포커스 대기 시간 확장
+
+                    // 명령어 입력 시퀀스
+                    Console.WriteLine($"  - Sending command: /monitor-issues");
+                    
+                    // Ctrl + L (입력창 포커스/지우기)
+                    System.Windows.Forms.SendKeys.SendWait("^l");
+                    Thread.Sleep(500);
+
+                    // 명령어 타이핑
+                    System.Windows.Forms.SendKeys.SendWait("/monitor-issues");
+                    Thread.Sleep(200);
+
+                    // Enter 실행
+                    System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+                    
+                    Console.WriteLine($"  - {agent} Agent initialization sequence completed.");
+                }
+                else
+                {
+                    Console.WriteLine($"  - Error: Timed out waiting for {agent} window.");
+                }
+
+                Thread.Sleep(1000); // 에이전트 간 실행 간격
+            }
+
+            Console.WriteLine("\n---------------------------------------------------------");
+            Console.WriteLine("All Agents have been processed. Systems ready.");
         }
 
         private static void ActivateWindow(string windowTitle)
@@ -167,8 +251,10 @@ namespace WindowAutomation
             Console.WriteLine("  sendkeys <window_title> <keys>       Send keys to window");
             Console.WriteLine("  list                                 List all visible windows");
             Console.WriteLine("  getactive                            Get currently active window");
+            Console.WriteLine("  setup                                Launch and initialize all 4 agents");
             Console.WriteLine();
             Console.WriteLine("Examples:");
+            Console.WriteLine("  WindowAutomation setup");
             Console.WriteLine("  WindowAutomation activate \"Antigravity - Leader\"");
             Console.WriteLine("  WindowAutomation sendkeys \"Antigravity\" \"^k\"");
             Console.WriteLine("  WindowAutomation list");
