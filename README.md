@@ -50,9 +50,11 @@ graph TB
 ## 빠른 시작
 
 1. **GitHub CLI 로그인**: `gh auth login`
-2. **Profile 설정**: `.\Tools\Scripts\Setup-Profiles.ps1` 실행
-3. **Agent 시작**: `.\Tools\Scripts\Start-Agent.ps1 -Agent Leader` (각각 실행)
-4. **Issue 모니터링**: Antigravity에서 `/monitor-issues` 실행
+
+## 5단계: Agent 실행 및 테스트
+1. 모든 에이전트 통합 실행: `.\Tools\Scripts\Start-All-Agents.ps1`
+2. 개별 실행이 필요한 경우: `.\Tools\Scripts\Start-Agent.ps1 -Agent Leader` 등
+3. Antigravity에서 `/monitor-issues` 입력하여 모니터링 시작
 
 더 자세한 내용은 [SETUP.md](file:///c:/Workspace/AntiCorp/SETUP.md)를 참고하세요.
 
