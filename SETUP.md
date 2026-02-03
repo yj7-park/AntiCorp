@@ -34,3 +34,4 @@ dotnet build --configuration Release
 ## 5단계: Agent 실행 및 테스트
 1. 각 Agent 실행: `.\Tools\Scripts\Start-Agent.ps1 -Agent Leader` 등
 2. Antigravity에서 `/monitor-issues` 입력하여 모니터링 시작
+

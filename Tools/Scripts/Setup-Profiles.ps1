@@ -33,3 +33,4 @@ foreach ($agent in $profiles) {
 
 Write-Host "`nAll Profiles have been set up successfully!" -ForegroundColor Green
 
+
