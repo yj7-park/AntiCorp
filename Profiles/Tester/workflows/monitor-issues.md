@@ -54,3 +54,4 @@ dotnet build --configuration Release
 > - 이 프로그램은 종료할 때까지 계속해서 이슈를 체크합니다.
 > - 새로운 이슈가 발견되면 즉시 알림(stdout)을 줍니다.
 
+
