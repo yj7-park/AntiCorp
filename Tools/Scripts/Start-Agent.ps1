@@ -1,11 +1,11 @@
 ﻿param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [ValidateSet("Leader", "Developer", "Tester", "DevOps")]
     [string]$Agent,
     
     [string]$WorkspacePath = "c:\Workspace\AntiCorp",
     
-    [string]$AntigravityPath = "antigravity.exe"
+    [string]$AntigravityPath = "antigravity"
 )
 
 <#

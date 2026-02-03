@@ -77,7 +77,7 @@ namespace WindowAutomation
         private static void SetupAllAgents()
         {
             string[] agents = { "Leader", "Developer", "Tester", "DevOps" };
-            string antigravityPath = "antigravity.exe";
+            string antigravityPath = "antigravity";
             string workspacePath = "c:\\Workspace\\AntiCorp";
 
             Console.WriteLine("AntiCorp System Orchestrator - Starting Setup Sequence...");
