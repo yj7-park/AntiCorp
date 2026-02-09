@@ -1,5 +1,7 @@
 using Octokit;
-using Newtonsoft.Json;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace IssueMonitor
 {
@@ -11,6 +13,32 @@ namespace IssueMonitor
         private static string? _repoName;
         private static List<string> _labels = new();
         private static int _pollIntervalSeconds = 10;
+        private static bool _monitorAll = false;
+        private static bool _runOnce = false;
+
+        // Windows API P/Invoke
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string? lpClassName, string? lpWindowName);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+
+        private const byte VK_CONTROL = 0x11;
+        private const byte VK_L = 0x4C;
+        private const byte VK_RETURN = 0x0D;
+        private const uint KEYEVENTF_KEYUP = 0x0002;
+
+        private static readonly Dictionary<string, string> RoleToLabel = new()
+        {
+            { "Leader", "@leader" },
+            { "Developer", "@developer" },
+            { "Tester", "@tester" },
+            { "Planner", "@planner" }
+        };
 
         static async Task Main(string[] args)
         {
@@ -20,8 +48,15 @@ namespace IssueMonitor
                 return;
             }
 
-            Console.WriteLine($"[IssueMonitor] Monitoring repository: {_repoOwner}/{_repoName}");
-            Console.WriteLine($"[IssueMonitor] Watching labels: {string.Join(", ", _labels)}");
+            Console.WriteLine($"[IssueMonitor] Repository: {_repoOwner}/{_repoName}");
+            if (_monitorAll)
+            {
+                Console.WriteLine("[IssueMonitor] Mode: Centralized Monitor (All roles)");
+            }
+            else
+            {
+                Console.WriteLine($"[IssueMonitor] Watching labels: {string.Join(", ", _labels)}");
+            }
             Console.WriteLine($"[IssueMonitor] Poll interval: {_pollIntervalSeconds}s");
             Console.WriteLine();
 
@@ -32,7 +67,7 @@ namespace IssueMonitor
                 client.Credentials = new Credentials(_githubToken);
             }
 
-            while (true)
+            do
             {
                 try
                 {
@@ -43,8 +78,11 @@ namespace IssueMonitor
                     Console.Error.WriteLine($"[ERROR] {ex.Message}");
                 }
 
-                await Task.Delay(_pollIntervalSeconds * 1000);
-            }
+                if (!_runOnce)
+                {
+                    await Task.Delay(_pollIntervalSeconds * 1000);
+                }
+            } while (!_runOnce);
         }
 
         private static async Task CheckForNewIssues(GitHubClient client)
@@ -60,35 +98,95 @@ namespace IssueMonitor
 
             foreach (var issue in issues)
             {
-                // 이미 처리한 issue는 스킵
                 if (ProcessedIssues.Contains(issue.Number))
                     continue;
 
-                // label이 일치하는지 확인
                 var issueLabels = issue.Labels.Select(l => l.Name).ToList();
-                bool hasMatchingLabel = _labels.Any(label => issueLabels.Contains(label));
-
-                if (hasMatchingLabel)
+                
+                if (_monitorAll)
                 {
-                    // 새로운 issue 발견 - stdout으로 출력
-                    OutputIssue(issue);
+                    // 중앙 모니터링: 각 역할별로 확인
+                    foreach (var role in RoleToLabel.Keys)
+                    {
+                        if (issueLabels.Contains(RoleToLabel[role]) || issueLabels.Contains("@all"))
+                        {
+                            OutputIssue(issue);
+                            TriggerAgent(role);
+                        }
+                    }
                     ProcessedIssues.Add(issue.Number);
                 }
+                else
+                {
+                    // 개별 에이전트 모드 (기존 호환성 유지)
+                    bool hasMatchingLabel = _labels.Any(label => issueLabels.Contains(label));
+                    if (hasMatchingLabel)
+                    {
+                        OutputIssue(issue);
+                        ProcessedIssues.Add(issue.Number);
+                    }
+                }
             }
+        }
+
+        private static void TriggerAgent(string role)
+        {
+            string windowTitle = $"Antigravity - AntiCorp-{role}";
+            Console.WriteLine($"[TRIGGER] Sending /monitor-issues to agent window: {windowTitle}");
+
+            IntPtr hWnd = FindWindow(null, windowTitle);
+            if (hWnd == IntPtr.Zero)
+            {
+                // 브라우저 탭이나 다른 타이틀 형식이 있을 수 있으므로 부분 일치 검색 탐색 (선택 사항)
+                Console.WriteLine($"[WARNING] Could not find window: {windowTitle}");
+                return;
+            }
+
+            SetForegroundWindow(hWnd);
+            Thread.Sleep(500); // 윈도우 전환 대기
+
+            // Ctrl+L
+            keybd_event(VK_CONTROL, 0, 0, 0);
+            keybd_event(VK_L, 0, 0, 0);
+            keybd_event(VK_L, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+
+            Thread.Sleep(200);
+
+            // Type "/monitor-issues"
+            string command = "/monitor-issues";
+            foreach (char c in command)
+            {
+                SendChar(c);
+            }
+
+            // Enter twice
+            keybd_event(VK_RETURN, 0, 0, 0);
+            keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0);
+            Thread.Sleep(100);
+            keybd_event(VK_RETURN, 0, 0, 0);
+            keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0);
+        }
+
+        private static void SendChar(char c)
+        {
+            // 간단한 구현: 대문자/특수문자 처리는 생략 (여기서는 고정된 명령어만 사용하므로)
+            // 실제 운영 환경에서는 SendKeys 등이 더 나을 수 있음
+            short vk = (short)c;
+            if (char.IsLetter(c)) vk = (short)char.ToUpper(c);
+            if (c == '/') vk = 0xBF; // VK_DIVIDE or VK_OEM_2
+            if (c == '-') vk = 0xBD; // VK_OEM_MINUS
+
+            keybd_event((byte)vk, 0, 0, 0);
+            keybd_event((byte)vk, 0, KEYEVENTF_KEYUP, 0);
         }
 
         private static void OutputIssue(Issue issue)
         {
             Console.WriteLine("---");
-            Console.WriteLine($"[NEW ISSUE] #{issue.Number}");
-            Console.WriteLine($"Title: {issue.Title}");
-            Console.WriteLine($"Labels: {string.Join(", ", issue.Labels.Select(l => l.Name))}");
-            Console.WriteLine($"Created: {issue.CreatedAt}");
+            Console.WriteLine($"[NEW ISSUE] #{issue.Number} - {issue.Title}");
             Console.WriteLine($"URL: {issue.HtmlUrl}");
-            Console.WriteLine("Body:");
-            Console.WriteLine(issue.Body);
             Console.WriteLine("---");
-            Console.WriteLine();
         }
 
         private static bool ParseArguments(string[] args)
@@ -99,10 +197,8 @@ namespace IssueMonitor
                 {
                     case "--token":
                     case "-t":
-                        if (i + 1 < args.Length)
-                            _githubToken = args[++i];
+                        if (i + 1 < args.Length) _githubToken = args[++i];
                         break;
-
                     case "--repo":
                     case "-r":
                         if (i + 1 < args.Length)
@@ -116,7 +212,6 @@ namespace IssueMonitor
                             }
                         }
                         break;
-
                     case "--labels":
                     case "-l":
                         if (i + 1 < args.Length)
@@ -125,27 +220,25 @@ namespace IssueMonitor
                             _labels = labels.Split(',').Select(l => l.Trim()).ToList();
                         }
                         break;
-
                     case "--interval":
                     case "-i":
-                        if (i + 1 < args.Length)
-                        {
-                            if (int.TryParse(args[++i], out int interval))
-                                _pollIntervalSeconds = interval;
-                        }
+                        if (i + 1 < args.Length && int.TryParse(args[++i], out int interval))
+                            _pollIntervalSeconds = interval;
+                        break;
+                    case "--all":
+                    case "-a":
+                        _monitorAll = true;
+                        break;
+                    case "--once":
+                        _runOnce = true;
                         break;
                 }
             }
 
-            // GitHub Token은 환경변수에서도 읽기 가능
             if (string.IsNullOrEmpty(_githubToken))
-            {
                 _githubToken = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-            }
 
-            return !string.IsNullOrEmpty(_repoOwner) && 
-                   !string.IsNullOrEmpty(_repoName) && 
-                   _labels.Any();
+            return !string.IsNullOrEmpty(_repoOwner) && !string.IsNullOrEmpty(_repoName) && (_labels.Any() || _monitorAll);
         }
 
         private static void PrintUsage()
@@ -153,16 +246,16 @@ namespace IssueMonitor
             Console.WriteLine("AntiCorp Issue Monitor");
             Console.WriteLine();
             Console.WriteLine("Usage:");
-            Console.WriteLine("  IssueMonitor --repo <owner/repo> --labels <label1,label2,...> [options]");
+            Console.WriteLine("  IssueMonitor --repo <owner/repo> --all [options]          (Central Monitor)");
+            Console.WriteLine("  IssueMonitor --repo <owner/repo> --labels <l1,l2> [options] (Single Agent)");
             Console.WriteLine();
             Console.WriteLine("Options:");
-            Console.WriteLine("  --repo, -r       Repository in format 'owner/repo' (required)");
-            Console.WriteLine("  --labels, -l     Comma-separated list of labels to monitor (required)");
-            Console.WriteLine("  --token, -t      GitHub personal access token (optional, can use GITHUB_TOKEN env var)");
-            Console.WriteLine("  --interval, -i   Poll interval in seconds (default: 10)");
-            Console.WriteLine();
-            Console.WriteLine("Example:");
-            Console.WriteLine("  IssueMonitor --repo yj7-park/AntiCorp --labels \"@leader,@all\" --interval 10");
+            Console.WriteLine("  --all, -a        Monitor all AntiCorp roles and trigger windows");
+            Console.WriteLine("  --once           Run once and exit");
+            Console.WriteLine("  --repo, -r       Repository 'owner/repo'");
+            Console.WriteLine("  --labels, -l     Labels for single agent mode");
+            Console.WriteLine("  --token, -t      GitHub token");
+            Console.WriteLine("  --interval, -i   Poll interval (default: 10)");
         }
     }
 }

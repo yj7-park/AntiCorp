@@ -83,3 +83,10 @@ ENV/
 # Temporary files
 *.tmp
 *.temp
+
+# AntiCorp Agent
+Profiles/*
+Leader/*
+Developer/*
+Tester/*
+DevOps/*

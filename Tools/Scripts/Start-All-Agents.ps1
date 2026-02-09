@@ -17,8 +17,10 @@ if (-not (Test-Path $automationExe)) {
 # 이 명령어 내부에서 루프를 돌며 에이전트 실행 및 키 입력을 처리합니다.
 & $automationExe setup
 
+Write-Host "통합 이슈 모니터링 시스템을 가동합니다..." -ForegroundColor Cyan
+# WindowAutomation.exe를 monitor 모드로 실행
+& $automationExe monitor --repo yj7-park/AntiCorp
+
 Write-Host "---------------------------------------------------------"
-Write-Host "모든 에이전트의 가동 시퀀스가 종료되었습니다. 🎉" -ForegroundColor Green
-Write-Host "각 에이전트 창의 하단 입력창에 '/monitor-issues'가 입력되었는지 확인하세요." -ForegroundColor Gray
-
-
+Write-Host "모든 에이전트 및 중앙 모니터링 가동 시퀀스가 종료되었습니다. 🎉" -ForegroundColor Green
+Write-Host "이슈가 발생하면 WindowAutomation이 각 에이전트 창에 자동으로 명령을 입력합니다." -ForegroundColor Gray

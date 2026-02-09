@@ -23,9 +23,14 @@ $labels = @(
     @{ name = "@leader"; color = "d73a4a"; desc = "Messages for the Leader Agent" },
     @{ name = "@developer"; color = "0075ca"; desc = "Messages for the Developer Agent" },
     @{ name = "@tester"; color = "008672"; desc = "Messages for the Tester Agent" },
-    @{ name = "@devops"; color = "e99695"; desc = "Messages for the DevOps Agent" },
+    @{ name = "@planner"; color = "e99695"; desc = "Messages for the Planner Agent" },
     @{ name = "@all"; color = "fbca04"; desc = "Broadcast to all Agents" },
-    @{ name = "@new-project"; color = "d93f0b"; desc = "Start New Project (Highest Priority for Leader)" }
+    @{ name = "@new-project"; color = "d93f0b"; desc = "Start New Project (Highest Priority for Leader)" },
+    @{ name = "@notified"; color = "c5def5"; desc = "Agent has been notified" },
+    @{ name = "@working"; color = "0e8a16"; desc = "Work in progress" },
+    @{ name = "@review"; color = "7057ff"; desc = "Review requested" },
+    @{ name = "@done"; color = "1d76db"; desc = "Work completed" },
+    @{ name = "@blocked"; color = "b60205"; desc = "Progress blocked" }
 )
 
 foreach ($l in $labels) {
@@ -34,7 +39,8 @@ foreach ($l in $labels) {
     gh label create $l.name --repo $Repo --color $l.color --description $l.desc --force 2>$null
     if ($LASTEXITCODE -eq 0) {
         Write-Host " OK" -ForegroundColor Green
-    } else {
+    }
+    else {
         # Check if already exists
         Write-Host " Done (Checked)" -ForegroundColor Gray
     }
