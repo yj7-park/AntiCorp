@@ -66,9 +66,22 @@ gh issue edit <이슈번호> --repo yj7-park/AntiCorp --remove-label "@review" -
 gh issue comment <Sprint이슈> --repo yj7-park/AntiCorp --body "✅ Sprint N 완료"
 ```
 
-### 3-C. 다음 Sprint 시작
+### 3-C. 전체 계획 업데이트 (Roadmap)
 
-Sprint N이 완료되면 Sprint N+1 시작:
+다음 Sprint를 시작하기 전에 **전체 계획 이슈(#2 등)**를 업데이트합니다.
+
+```powershell
+# 전체 계획 이슈 확인
+gh issue list --repo yj7-park/AntiCorp --label "@leader,project:$projectName" --search "Sprint 계획"
+
+# 이슈 본문 업데이트 (완료된 Sprint 체크)
+# gh issue edit <계획이슈번호> --body "..."
+echo "Sprint 계획 이슈를 수동으로 또는 명령어로 업데이트하여 완료 항목을 [x]로 표시하세요."
+```
+
+### 3-D. 다음 Sprint 시작
+
+Sprint N이 완료되고 계획이 업데이트되면 Sprint N+1 시작:
 
 ```powershell
 gh issue create --repo yj7-park/AntiCorp `
@@ -77,8 +90,16 @@ gh issue create --repo yj7-park/AntiCorp `
     --label "@planner,project:$projectName"
 ```
 
-### 4. 병목 해소
+### 4. Remote 동기화 확인 (필수)
+
+관리 작업 중 변경된 파일이 있다면 Push:
 
 ```powershell
-gh issue list --repo yj7-park/AntiCorp --label "@blocked,project:$projectName"
+cd c:\Workspace\AntiCorp\Projects\$projectName
+git status
+if (git status --porcelain) {
+    git add .
+    git commit -m "chore: Sprint 관리 업데이트"
+    git push
+}
 ```

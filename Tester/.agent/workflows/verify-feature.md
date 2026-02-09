@@ -17,6 +17,9 @@ Developer로부터 테스트 요청 이슈(`@tester`)를 받았을 때
 
 ## 실행 단계
 
+> [!IMPORTANT]
+> 검증이 끝나면 **반드시** 결과를 이슈로 생성해야 합니다. 성공 시 Leader에게 보고(`@review`), 실패 시 Developer에게 반환(`@developer`). 절대 침묵하지 마세요.
+
 // turbo-all
 
 ### 1. 이슈 수락
@@ -43,10 +46,29 @@ git pull
 
 ```powershell
 # Test 실행
-# dotnet test / npm test 등
+# dotnet test / npm test 등 (프로젝트 유형에 맞춰 실행)
 ```
 
-### 4-A. 버그 발견 시 (Developer에게 반환)
+### 4. Remote 동기화 확인 (필수)
+
+테스트 코드나 로그를 추가했다면 반드시 Push해야 합니다.
+
+```powershell
+git status
+# 변경사항이 있으면 커밋 및 푸시
+if (git status --porcelain) {
+    git add .
+    git commit -m "test: $projectName 검증 수행 (#이슈번호)"
+    git push
+}
+# Push 확인
+git log origin/main..HEAD
+```
+
+> [!WARNING]
+> Remote Repo에 반영되지 않은 작업은 무효입니다. Push를 확인하세요.
+
+### 5-A. 버그 발견 시 (Developer에게 반환)
 
 **템플릿:** `.github/ISSUE_TEMPLATE/bug_report.md`
 
@@ -61,10 +83,10 @@ gh issue create --repo yj7-park/AntiCorp `
 
 테스트 이슈 업데이트:
 ```powershell
-gh issue comment <테스트이슈> --repo yj7-park/AntiCorp --body "🐛 버그 발견: #버그이슈번호"
+gh issue comment <테스트이슈> --repo yj7-park/AntiCorp --body "🐛 버그 발견: #버그이슈번호 (Developer에게 전달됨)"
 ```
 
-### 4-B. 테스트 통과 시 (Leader에게 보고)
+### 5-B. 테스트 통과 시 (Leader에게 보고)
 
 ```powershell
 gh issue comment <이슈번호> --repo yj7-park/AntiCorp --body @"

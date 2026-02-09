@@ -48,13 +48,24 @@ git pull
 - 기능 코드 작성
 - 기본 동작 확인
 
-### 4. 커밋 및 Push
+### 4. Remote 동기화 확인 (필수)
+
+구현된 코드를 반드시 Remote에 반영합니다.
 
 ```powershell
-git add .
-git commit -m "feat(sprint-N): 기능 설명 (#이슈번호)"
-git push
+git status
+# 변경사항이 있으면 커밋 및 푸시
+if (git status --porcelain) {
+    git add .
+    git commit -m "feat(sprint-N): 기능 설명 (#이슈번호)"
+    git push
+}
+# Push 확인
+git log origin/main..HEAD
 ```
+
+> [!WARNING]
+> Remote Repo에 코드가 없으면 Tester가 테스트할 수 없습니다.
 
 ### 5. Tester에게 테스트 요청 (필수 인계)
 
@@ -110,6 +121,6 @@ gh issue edit <이슈번호> --repo yj7-park/AntiCorp --remove-label "@working"
 버그 이슈(`@bug`)를 받으면:
 
 1. 버그 이슈 수락 (`@working`)
-2. 버그 수정 및 Push
+2. 버그 수정 및 Push (위와 동일한 Push 검증 절차 수행)
 3. 버그 이슈에 코멘트: "🔧 수정 완료. 재테스트 요청"
 4. Tester에게 알림 (또는 @working 제거)

@@ -141,7 +141,20 @@ gh issue create --repo yj7-park/AntiCorp `
     --label "@all,project:$projectName"
 ```
 
-### 8. 원본 이슈 완료 처리
+### 8. Remote 동기화 확인 (필수)
+
+초기 생성 파일이 있다면 Push:
+
+```powershell
+git status
+if (git status --porcelain) {
+    git add .
+    git commit -m "chore: 프로젝트 초기화"
+    git push
+}
+```
+
+### 9. 원본 이슈 완료 처리
 
 모든 하위 이슈가 생성되었으므로, 원본 요청을 완료 처리합니다.
 

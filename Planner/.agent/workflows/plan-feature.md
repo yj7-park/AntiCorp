@@ -54,14 +54,24 @@ cd $projectName.wiki
 **설계 문서 구조:**
 (기존 템플릿 참조)
 
-### 4. 설계 문서 Push
+### 4. 설계 문서 Push (필수)
+
+작성된 설계 문서를 반드시 Remote에 반영합니다.
 
 ```powershell
 cd c:\Workspace\AntiCorp\Projects\$projectName.wiki
-git add .
-git commit -m "docs: Sprint N 설계 문서"
-git push
+git status
+if (git status --porcelain) {
+    git add .
+    git commit -m "docs: Sprint N 설계 문서"
+    git push
+}
+# Push 확인
+git log origin/main..HEAD
 ```
+
+> [!WARNING]
+> Remote Repo에 반영되지 않은 설계 문서는 Developer가 볼 수 없습니다.
 
 ### 5. Developer에게 구현 요청 (인계)
 
