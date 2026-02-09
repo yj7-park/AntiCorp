@@ -360,7 +360,7 @@ namespace WindowAutomation
 
         private static void SetupAllAgents()
         {
-            string[] agents = { "Leader", "Developer", "Tester", "DevOps" };
+            string[] agents = { "Leader", "Developer", "Tester", "Planner" };
             string antigravityPath = "antigravity";
             string workspacePath = "c:\\Workspace\\AntiCorp";
 

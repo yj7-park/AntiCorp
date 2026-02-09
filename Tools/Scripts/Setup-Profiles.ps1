@@ -1,4 +1,4 @@
-﻿$profiles = @("Leader", "Developer", "Tester", "DevOps")
+﻿$profiles = @("Leader", "Developer", "Tester", "Planner")
 $appData = [System.Environment]::GetFolderPath('ApplicationData')
 $baseTargetDir = Join-Path $appData "Antigravity\Profiles"
 $baseSourceDir = "c:\Workspace\AntiCorp\Profiles"

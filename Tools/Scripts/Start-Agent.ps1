@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet("Leader", "Developer", "Tester", "DevOps")]
+    [ValidateSet("Leader", "Developer", "Tester", "Planner")]
     [string]$Agent,
     
     [string]$WorkspacePath = "c:\Workspace\AntiCorp",
