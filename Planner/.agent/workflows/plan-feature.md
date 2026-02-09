@@ -8,18 +8,18 @@ description: Sprint 기능 설계 및 문서 작성
 
 **Planner**는 기획자/설계자로서 각 Sprint마다:
 - 해당 Sprint 기능 상세 설계
-- GitHub Wiki에 문서 작성
+- GitHub Wiki에 문서 작성 (프로젝트별)
 - 다음 Sprint 사전 분석
 
 ## 실행 시점
 
-Leader로부터 Sprint N 설계 요청 이슈를 받았을 때
+Leader로부터 Sprint N 설계 요청 이슈(`@planner`)를 받았을 때
 
 ## 실행 단계
 
 // turbo-all
 
-### 1. Sprint 이슈 수락
+### 1. 이슈 수락
 
 ```powershell
 gh issue edit <이슈번호> --repo yj7-park/AntiCorp --add-label "@working"
@@ -29,86 +29,62 @@ gh issue comment <이슈번호> --repo yj7-park/AntiCorp --body "📋 Planner Sp
 ### 2. 요구사항 분석
 
 Sprint 이슈에서 분석:
+- **프로젝트:** 라벨 `project:<name>` 확인
 - 이번 Sprint 목표
 - 구현할 기능 목록
-- 제약사항
 
 ### 3. 설계 문서 작성
 
 GitHub Wiki에 Sprint별 설계 문서 작성:
 
 ```powershell
-cd c:\Workspace\AntiCorp\Planner\<프로젝트>.wiki
+$projectName = "project-name" # 이슈 라벨에서 확인
+cd c:\Workspace\AntiCorp\Planner\$projectName.wiki
 ```
 
 **설계 문서 구조:**
-```markdown
-# Sprint N 설계
-
-## 목표
-(Sprint 목표)
-
-## 기능 명세
-### 기능 1
-- **목적:** 
-- **입력:** 
-- **출력:** 
-- **흐름:** 
-
-## 아키텍처
-(다이어그램 또는 설명)
-
-## API 정의 (해당 시)
-| 엔드포인트 | 메서드 | 설명 |
-|-----------|--------|------|
-| | | |
-
-## 데이터 모델 (해당 시)
-| 필드 | 타입 | 설명 |
-|------|------|------|
-| | | |
-
-## 구현 가이드
-- 권장 파일 구조
-- 주의사항
-
-## 테스트 포인트
-- 확인해야 할 동작
-- 엣지 케이스
-```
+(기존 템플릿 참조)
 
 ### 4. 설계 문서 Push
 
 ```powershell
-cd <프로젝트>.wiki
+cd $projectName.wiki
 git add .
 git commit -m "docs: Sprint N 설계 문서"
 git push
 ```
 
-### 5. 완료 보고
+### 5. Developer에게 구현 요청 (인계)
+
+**Planner의 작업 종료 → Developer의 작업 시작**
+설계가 완료되면 Developer에게 구현을 요청하는 **새로운 이슈**를 생성합니다.
+
+**템플릿:** `.github/ISSUE_TEMPLATE/implement_request.md`
 
 ```powershell
-gh issue comment <이슈번호> --repo yj7-park/AntiCorp --body @"
+# 프로젝트 라벨 변수 자동 적용
+$projectLabel = "project:$projectName"
+
+gh issue create --repo yj7-park/AntiCorp `
+    --title "[$projectName] Sprint N: 기능명 구현" `
+    --body "(구현 요청 템플릿 내용)" `
+    --label "@developer,$projectLabel"
+```
+
+### 6. 완료 보고 및 원본 이슈 정리
+
+```powershell
+gh issue comment <원본이슈번호> --repo yj7-park/AntiCorp --body @"
 ✅ Planner Sprint N 설계 완료
 
-**설계 문서:** https://github.com/yj7-park/<프로젝트>/wiki/Sprint-N
+**설계 문서:** https://github.com/yj7-park/$projectName/wiki/Sprint-N
 
-**주요 내용:**
-- (설계 핵심 요약)
-
-**Developer를 위한 구현 포인트:**
-- (구현 가이드 요약)
-
-**Tester를 위한 테스트 포인트:**
-- (테스트 가이드 요약)
+**Developer 요청:**
+- #구현이슈번호 (생성됨)
 
 @leader 검토 부탁드립니다.
 "@
 
-gh issue edit <이슈번호> --repo yj7-park/AntiCorp --remove-label "@working" --add-label "@review"
+# 원본 이슈에서 @working 제거 및 완료 처리
+gh issue edit <원본이슈번호> --repo yj7-park/AntiCorp --remove-label "@working" --add-label "@done" --state closed
 ```
-
-### 6. 다음 Sprint 사전 분석 (Optional)
-
-여유가 있으면 다음 Sprint 기능 사전 검토 및 메모
