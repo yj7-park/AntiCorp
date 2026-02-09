@@ -43,7 +43,9 @@ gh repo create yj7-park/$projectName --public --description "프로젝트 설명
 gh repo view yj7-park/$projectName
 ```
 
-### 3. 로컬에 Clone 및 초기화
+### 3. 로컬에 Clone 및 초기화 (공용 폴더)
+
+**중요:** 모든 에이전트가 공유하는 `c:\Workspace\AntiCorp\Projects` 폴더를 사용합니다.
 
 ```powershell
 cd c:\Workspace\AntiCorp\Projects
@@ -120,20 +122,21 @@ gh issue create --repo yj7-park/AntiCorp `
     --label "@planner,project:$projectName"
 ```
 
-### 7. 전체 에이전트에게 Clone 요청
+### 7. 공용 프로젝트 폴더 안내
+
+개별 Clone 요청 대신 공용 폴더 사용을 안내합니다.
 
 ```powershell
 gh issue create --repo yj7-park/AntiCorp `
-    --title "[$projectName] 프로젝트 Clone 요청" `
+    --title "[$projectName] 프로젝트 생성 알림 (공용 폴더 사용)" `
     --body @"
-새 프로젝트($projectName)가 생성되었습니다. 각자의 workspace에 clone해주세요.
+새 프로젝트($projectName)가 생성되었습니다.
 
 **Repo:** https://github.com/yj7-park/$projectName
+**Local Path:** c:\Workspace\AntiCorp\Projects\$projectName
 
-\`\`\`powershell
-cd (자신의 workspace)
-git clone https://github.com/yj7-park/$projectName.git
-\`\`\`
+모든 에이전트는 위 로컬 경로를 공용으로 사용하세요.
+ 별도의 Clone은 필요 없습니다. pull을 통해 동기화하세요.
 "@ `
     --label "@all,project:$projectName"
 ```
@@ -148,6 +151,7 @@ gh issue comment <원본이슈번호> --repo yj7-park/AntiCorp --body @"
 
 **생성 내역:**
 - **Repo:** https://github.com/yj7-park/$projectName
+- **Local Path:** c:\Workspace\AntiCorp\Projects\$projectName
 - **Sprint 계획:** #계획이슈번호
 - **Sprint 1 설계 요청:** #설계이슈번호 (Planner에게 전달됨)
 

@@ -8,14 +8,17 @@ description: Sprint 기능 구현
 
 **Developer**는 개발자로서 각 Sprint마다:
 - 설계 문서 기반 코드 구현
-- 테스트 요청 발급
-- 버그 수정 (반복)
+- GitHub Issue를 통한 작업 상태 관리
+- 구현 완료 시 **반드시** Tester에게 테스트 요청
 
 ## 실행 시점
 
 Leader 또는 Planner로부터 구현 요청 이슈(`@developer`)를 받았을 때
 
 ## 실행 단계
+
+> [!IMPORTANT]
+> 구현 후 **Step 5 (Tester 요청)**를 절대 건너뛰지 마세요. 프로세스가 멈추는 원인이 됩니다.
 
 // turbo-all
 
@@ -26,14 +29,15 @@ gh issue edit <이슈번호> --repo yj7-park/AntiCorp --add-label "@working"
 gh issue comment <이슈번호> --repo yj7-park/AntiCorp --body "🔧 Developer 구현 시작"
 ```
 
-### 2. 프로젝트 및 설계 확인
+### 2. 프로젝트 및 설계 확인 (공용 폴더)
 
 - **프로젝트:** 라벨 `project:<name>` 확인
 - **설계 문서:** 이슈 본문 링크 확인
 
 ```powershell
 $projectName = "project-name"
-cd c:\Workspace\AntiCorp\Developer\$projectName
+# 공용 폴더 사용
+cd c:\Workspace\AntiCorp\Projects\$projectName
 git pull
 ```
 
@@ -52,7 +56,7 @@ git commit -m "feat(sprint-N): 기능 설명 (#이슈번호)"
 git push
 ```
 
-### 5. Tester에게 테스트 요청 (인계)
+### 5. Tester에게 테스트 요청 (필수 인계)
 
 **Developer의 작업 종료 → Tester의 작업 시작**
 구현이 완료되면 Tester에게 검증을 요청하는 **새로운 이슈**를 생성합니다.
@@ -62,6 +66,7 @@ git push
 ```powershell
 $projectLabel = "project:$projectName"
 
+# 중요: 이슈 생성 결과를 확인하세요.
 gh issue create --repo yj7-park/AntiCorp `
     --title "[$projectName] Sprint N 기능 테스트 요청" `
     --body @"
@@ -93,6 +98,8 @@ gh issue comment <이슈번호> --repo yj7-park/AntiCorp --body @"
 
 **커밋:** (커밋 링크)
 **테스트 요청:** #테스트이슈번호 (Tester에게 전달됨)
+
+Tester의 검증을 대기합니다.
 "@
 # @working 라벨 제거 (대기 상태)
 gh issue edit <이슈번호> --repo yj7-park/AntiCorp --remove-label "@working"

@@ -26,13 +26,14 @@ gh issue edit <이슈번호> --repo yj7-park/AntiCorp --add-label "@working"
 gh issue comment <이슈번호> --repo yj7-park/AntiCorp --body "🧪 Tester 테스트 시작"
 ```
 
-### 2. 프로젝트 환경 설정
+### 2. 프로젝트 환경 설정 (공용 폴더)
 
 - **프로젝트:** 라벨 `project:<name>` 확인
 
 ```powershell
 $projectName = "project-name"
-cd c:\Workspace\AntiCorp\Tester\$projectName
+# 공용 폴더 사용
+cd c:\Workspace\AntiCorp\Projects\$projectName
 git pull
 ```
 
@@ -42,6 +43,7 @@ git pull
 
 ```powershell
 # Test 실행
+# dotnet test / npm test 등
 ```
 
 ### 4-A. 버그 발견 시 (Developer에게 반환)

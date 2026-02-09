@@ -8,7 +8,7 @@ description: Sprint 기능 설계 및 문서 작성
 
 **Planner**는 기획자/설계자로서 각 Sprint마다:
 - 해당 Sprint 기능 상세 설계
-- GitHub Wiki에 문서 작성 (프로젝트별)
+- GitHub Wiki에 문서 작성 (공용 폴더 내 Wiki 또는 GitHub Wiki Repo)
 - 다음 Sprint 사전 분석
 
 ## 실행 시점
@@ -37,9 +37,18 @@ Sprint 이슈에서 분석:
 
 GitHub Wiki에 Sprint별 설계 문서 작성:
 
+**공용 폴더 전략:**
+Wiki는 보통 별도 Repo(`<project>.wiki.git`)로 관리되므로, 공용 폴더 내에서 처리하거나 Web UI를 사용.
+여기서는 로컬 Markdown 작성 후 Push를 가정.
+
 ```powershell
 $projectName = "project-name" # 이슈 라벨에서 확인
-cd c:\Workspace\AntiCorp\Planner\$projectName.wiki
+# Wiki 폴더 확인 (없으면 Clone)
+cd c:\Workspace\AntiCorp\Projects
+if (!(Test-Path "$projectName.wiki")) {
+    git clone https://github.com/yj7-park/$projectName.wiki.git
+}
+cd $projectName.wiki
 ```
 
 **설계 문서 구조:**
@@ -48,7 +57,7 @@ cd c:\Workspace\AntiCorp\Planner\$projectName.wiki
 ### 4. 설계 문서 Push
 
 ```powershell
-cd $projectName.wiki
+cd c:\Workspace\AntiCorp\Projects\$projectName.wiki
 git add .
 git commit -m "docs: Sprint N 설계 문서"
 git push
